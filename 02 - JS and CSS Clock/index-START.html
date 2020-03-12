@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS + CSS Clock</title>
+</head>
+<body>
+
+
+    <div class="clock">
+      <div class="clock-face">
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+      </div>
+    </div>
+
+
+  <style>
+    html {
+      background: #018DED url(http://unsplash.it/1500/1000?image=881&blur=5);
+      background-size: cover;
+      font-family: 'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px); /* account for the height of the clock hands */
+    }
+
+    .hand {
+      width: 50%;
+      height: 6px;
+      background: black;
+      position: absolute;
+      top: 50%;
+      transform-origin: 100%;
+      transform: rotate(90deg);
+      transition: all cubic-bezier(0.25, 0.1, 0, 2.42) .07s;
+    }
+
+  </style>
+
+  <script>
+    // Get the hand
+    const hands = document.querySelectorAll('.hand');
+    const hourHand = document.querySelector('.hour-hand');
+    const minHand = document.querySelector('.min-hand');
+    const secondHand = document.querySelector('.second-hand');
+
+    const getTime = () => {
+      const date = new Date();
+      const sec = date.getSeconds();
+      const hour = date.getHours();
+      const min = date.getMinutes();
+      
+      return {hour, min, sec};
+    };
+
+    const setHands = () => {
+      let { hour, min, sec } = getTime();
+      // Set the actual time
+      hourHand.style.transform = `rotate(${((hour / 12) * 360) + 90}deg)`;
+      minHand.style.transform = `rotate(${((min / 60) * 360) + 90}deg)`;
+      secondHand.style.transform = `rotate(${((sec / 60) * 360) + 90}deg)`;
+    }
+
+    const setTransitions = () => {
+      let { hour, min, sec } = getTime();
+
+      // Remove transition at 360deg and add transition back after
+      if (sec === 0) {
+        secondHand.style.transition = 'none';
+      } else if (sec === 1) {
+        secondHand.style.removeProperty('transition');
+      }
+
+      if (min === 0) {
+        minHand.style.transition = 'none';
+      } else if (min === 1) {
+        minHand.style.removeProperty('transition');
+      }
+
+      if (hour === 12 || hour === 0) {
+        hourHand.style.transition = 'none';
+      } else if (min === 1 || hour === 13) {
+        hourHand.style.removeProperty('transition');
+      }
+    }
+
+    // Set initial time, to prevent glitch
+    setHands();
+
+    // Update the rotate value
+    const updateHands = () => {
+      setHands();
+      setTransitions();
+    }
+
+    setInterval(updateHands, 1000);
+  </script>
+</body>
+</html>
